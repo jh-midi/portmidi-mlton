@@ -9,6 +9,6 @@ It use the A,B ... G for showing the name of played notes.
 
 you have to compile portmidi yourself, and adapt the Makefile<br>
 to your system. Here it work with Fedora 42.<br>
-It work also on Windows with apropriate dll and Makefile<br>
+It work also on Windows with apropriate dll and Makefile and create a virtual port "diato" on loopmidi<br>
 make
 
