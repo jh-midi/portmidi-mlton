@@ -12,6 +12,9 @@ you have to compile portmidi yourself, and adapt the Makefile<br>
 to your system. Here it work with Fedora 42.<br>
 It work also on Windows with apropriate dll and Makefile<br>
 and create a virtual port "diato" on loopmidi<br>
-atomSQ_WIN_compiled.zip is provided with Makefile and dll for Windows
+atomSQ_WIN_compiled.zip is provided with Makefile and dll for Windows<br>
+
+The midi configuration is the same as :
+https://github.com/jh-midi/diato
 
 
