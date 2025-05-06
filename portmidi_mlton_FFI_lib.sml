@@ -60,7 +60,7 @@ structure PortmidiFFI = struct
     				   
     val Pm_WriteShort = _import "Pm_WriteShort" : pointer * int * int -> int;
 					
-    val Pm_WriteSysEx = _import "Pm_WriteSysEx" : pointer * int *  Word8.word array  -> int; (* string for unsigned char* *)
+    val Pm_WriteSysEx = _import "Pm_WriteSysEx" : pointer * int *  Word8.word array  -> int; 
 
     val malloc = _import "malloc" : int -> pointer;
 end
