@@ -1,5 +1,5 @@
 # portmidi-mlton
-FFI interface to portmidi for MLton
+FFI interface to portmidi for MLton : <cr>
 portmidi.sml + portmidi_mlton_FFI_lib.sml
 
 the rest of files is a program example which implement<cr>
