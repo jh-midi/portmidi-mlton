@@ -56,7 +56,6 @@ then don't convert to function
 val initialize  =  Pm_Initialize 
 val terminate  =  Pm_Terminate 
 
-(* not tested because I don't know how to have host error *)
 fun hasHostError stream = (Pm_HasHostError stream) = 1
 
 fun getHostErrorText taille = let
@@ -220,7 +219,7 @@ fun writeShort out_stream  when  msg  =  Pm_WriteShort (out_stream,when, msg)
 (*
 create sysex from hex blank separated string
 val syx = createSysex "F0 00 21 1D 01 01 1F F7";
-writeSysex 4 0 syx;
+writeSysex out_stream 0 syx;
  *)
 
 fun createSysex text = let
@@ -265,7 +264,7 @@ fun bufferSet buffer index  (ev : Event) =  Array.update (buffer,index,ev)
 (*
 val notes = Array.array (2, ( message(0x90,60,100),0 ));
 val _ = bufferSet notes 1 ( message(0x80,60,0),1000 ) ;
-val err = write  4 notes 2;
+val err = write  out_stream notes 2;
 *)
 		     
 (* Pm_Write PortMidiStream *stream, PmEvent *buffer, long length ); *)
@@ -308,7 +307,7 @@ val filt_systemcommon = logior [filt_mtc, filt_song_position, filt_song_select, 
 (* 16 bits mask *)
 fun pmChannel channel = Word.toInt ( Word.<< (0wx1,Word.fromInt channel))
 (* 
-setChannelMask  (4, pmChannel 0);
+setChannelMask  (in_stream, pmChannel 0);
 
 " Note that channels are numbered 0 to 15 (not 1 to 16). Most 
     synthesizer and interfaces number channels starting at 1, but
