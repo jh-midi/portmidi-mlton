@@ -1,4 +1,5 @@
 # portmidi-mlton
+work in progress ...
 FFI interface to portmidi for MLton : <cr>
 portmidi.sml + portmidi_mlton_FFI_lib.sml
 
