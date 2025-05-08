@@ -181,26 +181,14 @@ end
 (* test 
 val in_stream = openInput 3 100;
 
-
-
-
-val buf2 =  bufferNew 4; (* 2 notes *)
-=> val buf2 = fromList[(0, 0), (0, 0), (0, 0), (0, 0)]: (int * int) array 
+val buf2 =  bufferNew 4; (* 2 notes on  off *)
 
 read  in_stream buf2 4;
-=> val it = 4: int
-buf2;
-=> val it = fromList[(3933328, 4302877), (1152, 4302992), (2361232, 4303411),
-      (1920, 4303518)]: (int * int) array
 
 poll in_stream; 
-=> true
 
 read  in_stream buf2 4;
-=> 2
-buf2;
-=> val it = fromList[(6686352, 4303808), (1664, 4303901), (2361232, 4303411),
-      (1920, 4303518)]: (int * int) array
+
 *)
 
 				   
