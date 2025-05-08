@@ -56,7 +56,6 @@ then don't convert to function
 val initialize  =  Pm_Initialize 
 val terminate  =  Pm_Terminate 
 
-(* not tested because I don't know how to have host error *)
 fun hasHostError stream = (Pm_HasHostError stream) = 1
 
 fun getHostErrorText taille = let
