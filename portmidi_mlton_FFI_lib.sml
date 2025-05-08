@@ -3,12 +3,11 @@
  *)
 
 structure PortmidiFFI = struct
- type hndl = MLton.Pointer.t
  type pointer =  MLton.Pointer.t
  type pm_stream_ptr = MLton.Pointer.t ref
  type pm_stream = MLton.Pointer.t
- type pm_event = Int64.int (* struct PmEvent {int32_t message, int32_t timestamp} *)
- type buffer = MLton.Pointer.t
+ type pm_event = int array (* struct PmEvent {int32_t message, int32_t timestamp} *)
+ type buffer =  pm_event
 		     
     val Pt_Started = _import "Pt_Started" : unit ->  int;
     val Pt_Start = _import "Pt_Start" : int * pointer * pointer -> int;
@@ -40,30 +39,28 @@ structure PortmidiFFI = struct
     val Pm_CreateVirtualOutput = _import "Pm_CreateVirtualOutput": string * string * pointer -> int;
 
     val Pm_DeleteVirtualDevice = _import "Pm_DeleteVirtualDevice" :int -> int;
-						 
   					
-    val Pm_SetFilter = _import "Pm_SetFilter" : pm_stream * int -> int;
+    val Pm_SetFilter = _import "Pm_SetFilter" : pm_stream * word -> int;
 
-    val Pm_SetChannelMask = _import "Pm_SetChannelMask" : pm_stream * int ->  int;
+    val Pm_SetChannelMask = _import "Pm_SetChannelMask" : pm_stream * word ->  int;
 					     
-    val Pm_Abort = _import "Pm_Abort" : pointer -> int; 
+    val Pm_Abort = _import "Pm_Abort" : pm_stream -> int; 
 
-    val Pm_Close = _import "Pm_Close" : pointer -> int;
+    val Pm_Close = _import "Pm_Close" : pm_stream -> int;
 
-    val Pm_Synchronise = _import "Pm_Synchronize" : pointer -> int;
+    val Pm_Synchronise = _import "Pm_Synchronize" : pm_stream -> int;
 
     val Pm_Read = _import "Pm_Read" : pm_stream * buffer * int -> int;
 
-    val Pm_Poll = _import "Pm_Poll" : pointer -> int;
+    val Pm_Poll = _import "Pm_Poll" : pm_stream -> int;
 
     val Pm_Write = _import "Pm_Write" :  pm_stream * buffer * int -> int;
     				   
-    val Pm_WriteShort = _import "Pm_WriteShort" : pointer * int * int -> int;
+    val Pm_WriteShort = _import "Pm_WriteShort" : pm_stream * int * int -> int;
 					
-    val Pm_WriteSysEx = _import "Pm_WriteSysEx" : pointer * int *  Word8.word array  -> int; 
+    val Pm_WriteSysEx = _import "Pm_WriteSysEx" : pm_stream * int *  Word8.word array  -> int; 
 
-    val malloc = _import "malloc" : int -> pointer;
-end
+ end
 				 
 
 

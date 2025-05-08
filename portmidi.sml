@@ -56,6 +56,7 @@ then don't convert to function
 val initialize  =  Pm_Initialize 
 val terminate  =  Pm_Terminate 
 
+(* not tested because I don't know how to have host error *)
 fun hasHostError stream = (Pm_HasHostError stream) = 1
 
 fun getHostErrorText taille = let
@@ -157,7 +158,7 @@ end
 
 val c3 = message (0x90, 60, 100);
 val out_stream = openOutput 4 100 0; (* latence = 0 *)
-writeShort  out_stream 0 note;
+writeShort  out_stream 0 c3;
 
 (*  note-off *)
 val c3' = message (0x80, 60, 0);
@@ -181,6 +182,9 @@ end
 (* test 
 val in_stream = openInput 3 100;
 
+
+
+
 val buf2 =  bufferNew 4; (* 2 notes *)
 => val buf2 = fromList[(0, 0), (0, 0), (0, 0), (0, 0)]: (int * int) array 
 
@@ -203,11 +207,11 @@ buf2;
 				   
 (* tuple as arg because I want to pass it to the function *)
 fun message (status, data1, data2) =
-    LargeInt.toInt (
-	IntInf.orb (
-	    (IntInf.orb(IntInf.andb((IntInf.<< (Int.toLarge(data2), 0w16)), 0xFF0000),
-			IntInf.andb((IntInf.<< (Int.toLarge(data1), 0w8)),0xFF00))),
-	    IntInf.andb(Int.toLarge(status),0xFF))
+    Word.toInt (
+	Word.orb (
+	    Word.orb(Word.andb((Word.<< (Word.fromInt data2, 0w16)), 0wxFF0000),
+			Word.andb(Word.<< (Word.fromInt data1, 0w8),0wxFF00)),
+	    Word.andb(Word.fromInt status,0wxFF))
     )
 
 (* 
@@ -232,12 +236,13 @@ end
 			
 fun writeSysex out_stream when sysex = Pm_WriteSysEx (out_stream,when,sysex)
 
-fun messageStatus msg = IntInf.andb(msg,0xFF)
-fun messageData1 msg = IntInf.andb(IntInf.~>>(msg,0w8),0xFF)
-fun messageData2 msg = IntInf.andb(IntInf.~>>(msg,0w16),0xFF)
+fun messageStatus msg = Word8.fromInt msg
+fun messageData1 msg = Word8.fromLarge (Word.toLarge (Word.~>>(Word.fromInt msg,0w8)))
+fun messageData2 msg = Word8.fromLarge  (Word.toLarge (Word.~>>(Word.fromInt msg,0w16)))
+fun messageData3 msg = Word8.fromLarge  (Word.toLarge (Word.~>>(Word.fromInt msg,0w24)))
 				  
-fun messageType msg =  IntInf.andb(msg,0xF0)
-
+fun messageType msg =  Word8.fromLarge  (Word.toLarge  (Word.andb (Word.fromInt msg, 0wxF0)))
+				  
 (*
   poll  in_stream;
 *)
@@ -248,66 +253,81 @@ type PmEvent = {
     timestamp : int
 }
 		   
-type Event = int*int
 
-
+		 
+type My_Buffer = int array
 
 (* buffer needed for read and write events by packets 
 we can also use Array.fromList cf test upward
- Malloc 8 = event struct len 4xchar + 1xint32 *)
-fun bufferNew taille = Array.array(taille, (malloc 8))
+ event struct len 4xchar + 1xint32 *)
+fun bufferNew taille = Array.array(2 * taille, 0)
+fun bufferElt buf place = ArraySlice.slice(buf,place * 2, SOME 2)  
 
-fun bufferSet buffer index  (ev : Event) =  Array.update (buffer,index,ev)
-
+type my_event = int*int (* tupple seem more convenient than array or list *)
+fun bufferSet buffer index  (ev :my_event) =
+    let val msg = #1 ev
+	val ts = #2 ev
+	val my_index = index * 2
+    in
+	Array.update (buffer,my_index,msg);
+	Array.update (buffer,my_index+1,ts)
+    end
+	
 
 
 (*
-val notes = Array.array (2, ( message(0x90,60,100),0 ));
-val _ = bufferSet notes 1 ( message(0x80,60,0),1000 ) ;
-val err = write  out_stream notes 2;
+val notes = bufferNew 2 ;
+val _ = bufferSet notes 0 ( message(0x90,60,100),1000 ) ;
+val _ = bufferSet notes 1 ( message(0x80,60,0),1200 ) ;
+val err = write out_stream notes 2;
+*** or ***
+val buf_out = Array.fromList  [ message(0x90,60,100),1000
+			    , message(0x80,60,0),1200 
+			     ,message(0x90,80,50),1300
+                             ,message(0x80,80,0),1300 ];
+val err = write out_stream buf_out 3;
 *)
 		     
 (* Pm_Write PortMidiStream *stream, PmEvent *buffer, long length ); *)
 
-fun write out_stream buffer len = Pm_Write(out_stream , (buffer : MLton.Pointer.t) ,len)
+fun write out_stream buffer len = Pm_Write(out_stream , (buffer : My_Buffer) ,len)
 
-fun read in_stream buffer len = Pm_Read(in_stream, (buffer : MLton.Pointer.t), len)
+fun read in_stream buffer len = Pm_Read(in_stream, (buffer : My_Buffer), len)
 
 fun setFilter (in_stream, filter) = Pm_SetFilter(in_stream,filter)
 
 (* logior list *)
-fun logior list_int =
-    Int.fromLarge ( List.foldr (fn (x,acc) => (IntInf.orb ((Int.toLarge x),acc))) (Int.toLarge 0)  list_int)
+fun logior list_word = List.foldr (fn (x,acc) => Word.orb (x,acc)) 0w0  list_word
 
 (* filter for input stream I don't see effect on output *)
-fun filter elem = Word.toInt (Word.<< (0wx1,Word.fromInt elem) )
+fun filter elem = Word.<< (0wx1,elem) 
 				  
-val filt_active = filter 0x0E 
-val filt_sysex = filter 0x00 
-val filt_clock = filter 0x08
-val filt_play = logior [filter 0x0a,filter 0x0C,filter 0x0B] 
-val filt_tick = filter 0x09 
-val filt_fd = filter 0x0D
+val filt_active = filter 0wx0E 
+val filt_sysex = filter 0wx00 
+val filt_clock = filter 0wx08
+val filt_play = logior [filter 0wx0a,filter 0wx0C,filter 0wx0B] 
+val filt_tick = filter 0wx09 
+val filt_fd = filter 0wx0D
 val filt_undefined = filt_fd
-val filt_reset = filter 0x0F
+val filt_reset = filter 0wx0F
 val filt_realtime =  logior [filt_active, filt_sysex,filt_clock, filt_play, filt_undefined, filt_reset,filt_tick]
-val filt_note = logior [filter 0x19,filter 0x18] 
-val filt_channel_aftertouch = filter 0x1D
-val filt_poly_aftertouch = filter 0x1A
+val filt_note = logior [filter 0wx19,filter 0wx18] 
+val filt_channel_aftertouch = filter 0wx1D
+val filt_poly_aftertouch = filter 0wx1A
 val filt_aftertouch = logior [filt_channel_aftertouch, filt_poly_aftertouch]
-val filt_program = filter 0x1C
-val filt_control = filter 0x1B 
-val filt_pitchbend = filter 0x1E 
-val filt_mtc = filter 0x01
-val filt_song_position = filter 0x02 
-val filt_song_select = filter 0x03
-val filt_tune = filter 0x06
+val filt_program = filter 0wx1C
+val filt_control = filter 0wx1B 
+val filt_pitchbend = filter 0wx1E 
+val filt_mtc = filter 0wx01
+val filt_song_position = filter 0wx02 
+val filt_song_select = filter 0wx03
+val filt_tune = filter 0wx06
 val filt_systemcommon = logior [filt_mtc, filt_song_position, filt_song_select, filt_tune]
 
 (* 16 bits mask *)
-fun pmChannel channel = Word.toInt ( Word.<< (0wx1,Word.fromInt channel))
+fun pmChannel channel =  Word.<< (0wx1,channel)
 (* 
-setChannelMask  (in_stream, pmChannel 0);
+setChannelMask  (in_stream, pmChannel 0wx0);
 
 " Note that channels are numbered 0 to 15 (not 1 to 16). Most 
     synthesizer and interfaces number channels starting at 1, but
