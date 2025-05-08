@@ -245,7 +245,7 @@ type PmEvent = {
 type My_Buffer = int array
 
 (* buffer needed for read and write events by packets 
-we can also use Array.fromList cf test upward
+we can also use Array.fromList cf test below
  event struct len 4xchar + 1xint32 *)
 fun bufferNew taille = Array.array(2 * taille, 0)
 fun bufferElt buf place = ArraySlice.slice(buf,place * 2, SOME 2)  
@@ -262,7 +262,7 @@ fun bufferSet buffer index  (ev :my_event) =
 	
 
 
-(*
+(* test
 val notes = bufferNew 2 ;
 val _ = bufferSet notes 0 ( message(0x90,60,100),1000 ) ;
 val _ = bufferSet notes 1 ( message(0x80,60,0),1200 ) ;
