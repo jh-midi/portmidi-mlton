@@ -1,12 +1,15 @@
 signature C_STRING = sig
-   val isNull: MLton.Pointer.t -> bool
-   val size: MLton.Pointer.t -> int
-   val sub: MLton.Pointer.t * int -> char
-   val toString: MLton.Pointer.t -> string
+   type t
+ 
+   val isNull: t -> bool
+   val size: t -> int
+   val sub: t * int -> char
+   val toString: t -> string
 end
 
-structure CString:> C_STRING = struct
-
+structure CString : C_STRING = struct
+   type t = MLton.Pointer.t
+	     
    fun isNull s = s =  MLton.Pointer.null
 
    fun sub (s, i) = Byte.byteToChar ( MLton.Pointer.getWord8 (s, i))
