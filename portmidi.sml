@@ -192,7 +192,6 @@ read  in_stream buf2 4;
 *)
 
 				   
-(* tuple as arg because I want to pass it to the function *)
 fun message (status, data1, data2) =
     Word.toInt (
 	Word.orb (
@@ -235,12 +234,13 @@ fun messageType msg =  Word8.fromLarge  (Word.toLarge  (Word.andb (Word.fromInt 
 *)
 fun poll in_stream = (Pm_Poll in_stream) = 1
 
+(*
 type PmEvent = {
     message : int,
     timestamp : int
 }
-		   
-
+  
+*)
 		 
 type My_Buffer = int array
 
@@ -249,11 +249,12 @@ we can also use Array.fromList cf test below
  event struct len 4xchar + 1xint32 *)
 fun bufferNew taille = Array.array(2 * taille, 0)
 fun bufferElt buf place = ArraySlice.slice(buf,place * 2, SOME 2)  
-
-type my_event = int*int (* tupple seem more convenient than array or list *)
+(* buffer is considered as  (int32*int32) pointer array on C side then length/2 *)
+fun bufferSize buf = Array.length buf div 2 
+					      
+type my_event = int*int (* tuple seem more convenient than array or list *)
 fun bufferSet buffer index  (ev :my_event) =
-    let val msg = #1 ev
-	val ts = #2 ev
+    let val (msg,ts) =  ev
 	val my_index = index * 2
     in
 	Array.update (buffer,my_index,msg);
@@ -272,7 +273,7 @@ val buf_out = Array.fromList  [ message(0x90,60,100),1000
 			    , message(0x80,60,0),1200 
 			     ,message(0x90,80,50),1300
                              ,message(0x80,80,0),1300 ];
-val err = write out_stream buf_out 3;
+val err = write out_stream buf_out (bufferSize buf_out);
 *)
 		     
 (* Pm_Write PortMidiStream *stream, PmEvent *buffer, long length ); *)
