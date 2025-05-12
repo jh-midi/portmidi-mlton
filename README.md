@@ -10,9 +10,9 @@ https://github.com/jh-midi/AtomSQ-accordion
 the better is to compile portmidi yourself because the Fedora, Debian, Ubuntu distribution don't <br>
 provide the last version with virtualdevice creation.<br>
 compile with the dynamic lib :<br>
-**important
+**important**<br>
 https://github.com/PortMidi/portmidi/releases/tag/v2.0.3<br>
-the recent version cause segmentation fault with Ardour.
+**the recent git version cause segmentation fault with Ardour.**
 <br>
 <br>It work with Fedora 42.<br>
 
