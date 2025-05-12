@@ -17,9 +17,8 @@ the most recent git version cause segmentation fault when starting Ardour.
 <br>
 the Makefile here is for Fedora 42<br>
 you have to change the library path for another distribution<br>
-and <br>
-make test </br>
-make test-static<br>
+$ make test </br>
+$ make test-static<br>
 
 
 
