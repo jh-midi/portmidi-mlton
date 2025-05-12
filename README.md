@@ -12,7 +12,8 @@ provide the last version with virtualdevice creation.<br>
 <ins> compile with :</ins> <br>
 
 https://github.com/PortMidi/portmidi/releases/tag/v2.0.3<br>
-**the recent git version cause segmentation fault with Ardour.**
+
+the most recent git version cause segmentation fault when starting Ardour.
 <br>
 
 
