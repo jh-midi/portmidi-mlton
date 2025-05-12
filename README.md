@@ -8,7 +8,7 @@ application example can be see at :<br>
 https://github.com/jh-midi/AtomSQ-accordion
 
 the better is to compile portmidi yourself because the Fedora, Debian, Ubuntu distribution don't <br>
-provide the best last version with virtualdevice creation.<br>
+provide the best version with virtualdevice creation.<br>
 <ins> compile with :</ins> <br>
 
 https://github.com/PortMidi/portmidi/releases/tag/v2.0.3<br>
