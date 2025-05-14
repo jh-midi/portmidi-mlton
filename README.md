@@ -21,7 +21,7 @@ for the static compilation you should have libgmp.a and libportmidi.a in your li
 and the application can be distribued all in one<br>
 $ make test-static<br>
 
-another pplication example can be see at :<br>
+another application example can be see at :<br>
 https://github.com/jh-midi/AtomSQ-accordion
 
 
