@@ -5,12 +5,13 @@ portmidi_mlton.sml (all in one)
 Simple tests : main.sml + test.mlb + Makefile
 
 the better is to compile portmidi yourself because the Fedora, Debian, Ubuntu distribution don't <br>
-provide the best version with virtualdevice creation.<br>
-work well with the v2.0.3 release : <br>
+provide the best version with virtualdevice creation and the most recent git version <br>
+cause segmentation fault when starting Ardour...<br>
+but work well with the v2.0.3 release : <br>
 
 https://github.com/PortMidi/portmidi/releases/tag/v2.0.3<br>
 
-the most recent git version cause segmentation fault when starting Ardour.
+
 <br>
 the Makefile here is for Fedora 42<br>
 you have to change the library path for another distribution<br>
