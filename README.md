@@ -1,11 +1,8 @@
 # portmidi-mlton
 FFI interface to portmidi for MLton : <cr>
-portmidi.sml + portmidi_mlton_FFI_lib.sml + cstring.sml
+portmidi_mlton.sml (all in one)
 
 Simple tests : main.sml + test.mlb + Makefile
-
-application example can be see at :<br>
-https://github.com/jh-midi/AtomSQ-accordion
 
 the better is to compile portmidi yourself because the Fedora, Debian, Ubuntu distribution don't <br>
 provide the best version with virtualdevice creation.<br>
@@ -18,9 +15,13 @@ the most recent git version cause segmentation fault when starting Ardour.
 the Makefile here is for Fedora 42<br>
 you have to change the library path for another distribution<br>
 $ make test </br>
+$ ./test<br>
+for the static compilation you should have libgmp.a and libportmidi.a in your library path<br>
+and the application can be distribued all in one<br>
 $ make test-static<br>
 
-
+another pplication example can be see at :<br>
+https://github.com/jh-midi/AtomSQ-accordion
 
 
 
