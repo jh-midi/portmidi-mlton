@@ -1,6 +1,6 @@
 # portmidi-mlton
 FFI interface to portmidi for MLton : <cr>
-portmidi_mlton.sml (all in one)
+portmidi_mlton.sml (all in one sml file)
 
 Simple tests : main.sml + test.mlb + Makefile
 
@@ -18,7 +18,7 @@ you have to change the library path for another distribution<br>
 $ make test </br>
 $ ./test<br>
 for the static compilation you should have libgmp.a and libportmidi.a in your library path<br>
-and the application can be distribued all in one<br>
+and the application can be distribued all in one file<br>
 $ make test-static<br>
 
 another application example can be see at :<br>
